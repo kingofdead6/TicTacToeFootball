@@ -1,8 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import { randomUUID } from 'node:crypto'
-import { players } from './data/players.js'
-import { allCategories, categoryById } from './data/categories.js'
+import { players } from './src/data/players.js'
+import { allCategories, categoryById } from './src/data/categories.js'
 import {
   answersFor,
   generateGrid,
@@ -13,8 +13,8 @@ import {
   publicPlayer,
   searchPlayers,
   solutionsFor,
-} from './game.js'
-import { addMatch, leaderboard, listMatches, stats } from './store.js'
+} from './src/game.js'
+import { addMatch, leaderboard, listMatches, stats } from './src/store.js'
 
 const app = express()
 app.use(cors())
