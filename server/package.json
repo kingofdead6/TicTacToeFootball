@@ -1,0 +1,15 @@
+{
+  "name": "tictactoe-football-api",
+  "version": "1.0.0",
+  "description": "REST API for Tic Tac Toe Football: players, categories, grids and match history",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
