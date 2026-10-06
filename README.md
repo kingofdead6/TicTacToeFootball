@@ -37,14 +37,21 @@ Without `MONGODB_URI` the server still runs. Online play works as guests, and pl
 |---|---|
 | `Profile` | username, avatar, hashed token, rating / peakRating, stats, streaks |
 | `Match` | mode (online/local/cpu), ranked, settings, players (with rating before/after), every round and move |
-| `Footballer` | the player database (seeded from `src/data/players.js` on start), with pick/correct counters. Set `active: false` to hide one |
+| `Footballer` | 61k footballers mirrored from the dataset: Wikidata id, nationality, position, birth year, fame, clubs, awards, pick/correct counters. Set `active: false` to hide one |
+| `Category` | every club, nation and trophy category with its player count |
+| `Meta` | which dataset version is mirrored (the mirror only re-runs when it changes) |
 
 ## REST API (`/api`)
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/health` | Status, DB state, live room counts |
-| GET | `/categories` | Clubs, nations and trophies |
-| GET | `/players?search=` / `/players?limit=500` | Search / full list with pick stats |
+| GET | `/dataset` | Dataset version, source and counts |
+| GET | `/categories?type=club\|nation\|award&tier=&q=` | Clubs, nations and trophies with player counts |
+| GET | `/categories/:id` | One category and its best-known players |
+| GET | `/players?q=&nation=&club=&award=&position=&sort=fame\|name\|picked&page=&limit=` | Paged, filterable browsing (max 100 per page) |
+| GET | `/players/search?q=` | Autocomplete, ranked by match quality then fame |
+| GET | `/players/:id` | One footballer |
+| GET | `/answers?row=&col=` | Every valid answer for two categories |
 | GET | `/grid?difficulty=` · `/grid/:id/solutions` | Grids for offline modes |
 | POST | `/validate` · `/cpu-answer` | Offline answer checking / AI answers |
 | POST | `/profiles` `{username, avatar}` | Create a card, returns `{token, profile}` |
@@ -58,5 +65,16 @@ Client → server (with an ack callback): `room:create {settings}`, `room:join {
 
 Server → client: `room:state` (the full room state), `game:event` (correct / wrong / timeout / round_over / match_over / …), `game:focus`, `chat:message`
 
-## Adding footballers
-Edit `server/src/data/players.js` (`[name, nationality, position, [clubIds], 'BWU']`) and restart. The database is updated automatically and pick stats are kept.
+## Footballer data
+The dataset (`server/src/data/generated/dataset.json.gz`, ~1.6 MB) has **61,265 footballers**, **131 clubs**, **73 nations** and 5 trophies. It's built from **Wikidata** (CC0) by:
+
+```bash
+cd server && npm run import:players      # about 3 minutes
+```
+
+- **Players:** everyone who played for a club in `src/data/clubs.js`. To add a club, give it a colour, short code, tier and Wikipedia title there, then re-run the import.
+- **Names:** taken from the player's English Wikipedia article title, which is less exposed to label vandalism than Wikidata labels.
+- **Fame:** the number of Wikipedia language editions. It ranks search results, guides the AI's picks, and keeps easy and medium grids to well-known players (12 or more editions).
+- **Awards:** Ballon d'Or, FIFA World Player / The Best and the European Golden Shoe come from Wikidata. World Cup and Champions League winners come from the hand-checked list in `src/data/players.js`, which is merged in, and its spellings take priority.
+
+Commit the new dataset file and redeploy. On start, the server mirrors a new version into MongoDB, and pick stats are kept.
