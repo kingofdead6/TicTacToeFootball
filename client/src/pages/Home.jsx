@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Segmented from '../components/Segmented.jsx'
 import { api } from '../api.js'
+import { useProfile } from '../profile.jsx'
 
 const TITLE = ['TIC', 'TAC', 'TOE']
 
 const MODES = [
   { id: 'local', title: 'Pass & Play', desc: 'Two players, one screen', icon: '🧑‍🤝‍🧑' },
   { id: 'cpu', title: 'vs Computer', desc: 'Challenge the AI scout', icon: '🤖' },
+  { id: 'online', title: 'Online', desc: 'Live match by code', icon: '🌐', live: true },
 ]
 
 const STEPS = [
@@ -16,13 +18,19 @@ const STEPS = [
   { icon: '❌⭕', title: 'Get three in a row', text: 'Wrong answer or time out? Your turn is gone.' },
 ]
 
-export default function Home({ onStart, initial }) {
+export default function Home({ onStart, initial, onOnline }) {
   const [mode, setMode] = useState(initial?.mode ?? 'local')
   const [names, setNames] = useState(initial?.names ?? ['Player 1', 'Player 2'])
   const [difficulty, setDifficulty] = useState(initial?.difficulty ?? 'medium')
   const [timer, setTimer] = useState(initial?.timer ?? 30)
   const [cpuLevel, setCpuLevel] = useState(initial?.cpuLevel ?? 'pro')
   const [health, setHealth] = useState(null)
+  const { profile } = useProfile()
+
+  // Use the player card name for X when one exists
+  useEffect(() => {
+    if (profile && !initial) setNames((n) => (n[0] === 'Player 1' ? [profile.username, n[1]] : n))
+  }, [profile, initial])
 
   useEffect(() => {
     api.health().then(setHealth).catch(() => setHealth({ ok: false }))
@@ -134,19 +142,24 @@ export default function Home({ onStart, initial }) {
         <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl" />
         <h2 className="font-display text-4xl tracking-wide">Match setup</h2>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
           {MODES.map((m) => (
             <motion.button
               key={m.id}
               whileHover={{ y: -3 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => setMode(m.id)}
-              className={`relative cursor-pointer rounded-2xl border p-4 text-left transition-colors ${
+              onClick={() => (m.id === 'online' ? onOnline() : setMode(m.id))}
+              className={`relative cursor-pointer rounded-2xl border p-3 text-left transition-colors sm:p-4 ${
                 mode === m.id ? 'border-emerald-300/70 bg-emerald-300/10' : 'border-white/10 bg-black/20 hover:border-white/25'
               }`}
             >
               <div className="text-3xl">{m.icon}</div>
-              <div className="mt-2 font-bold">{m.title}</div>
+              {m.live && (
+                <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-rose-500/20 px-1.5 py-0.5 text-[9px] font-bold text-rose-200">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-400" /> LIVE
+                </span>
+              )}
+              <div className="mt-2 text-sm font-bold sm:text-base">{m.title}</div>
               <div className="text-xs text-white/50">{m.desc}</div>
               {mode === m.id && (
                 <motion.span layoutId="mode-check" className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-emerald-300 text-xs text-pitch-950">

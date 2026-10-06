@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import Portal from './Portal.jsx'
 
 export default function ResultModal({ open, result, names, scores, onNext, onReveal, onExit }) {
   const isDraw = result?.winner === 'draw'
@@ -6,6 +7,7 @@ export default function ResultModal({ open, result, names, scores, onNext, onRev
   const color = result?.winner === 'X' ? 'text-x' : result?.winner === 'O' ? 'text-o' : 'text-amber-300'
 
   return (
+    <Portal>
     <AnimatePresence>
       {open && result && (
         <motion.div
@@ -74,5 +76,6 @@ export default function ResultModal({ open, result, names, scores, onNext, onRev
         </motion.div>
       )}
     </AnimatePresence>
+    </Portal>
   )
 }

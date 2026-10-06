@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import Portal from './Portal.jsx'
 
 const TONES = {
   error: 'border-rose-400/40 bg-rose-500/20 text-rose-100',
@@ -8,6 +9,7 @@ const TONES = {
 
 export default function Toasts({ toasts }) {
   return (
+    <Portal>
     <div className="pointer-events-none fixed inset-x-0 top-20 z-[60] flex flex-col items-center gap-2 px-4">
       <AnimatePresence>
         {toasts.map((t) => (
@@ -25,5 +27,6 @@ export default function Toasts({ toasts }) {
         ))}
       </AnimatePresence>
     </div>
+    </Portal>
   )
 }

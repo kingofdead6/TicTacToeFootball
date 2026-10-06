@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import CategoryBadge, { Flag } from './CategoryBadge.jsx'
 import { api } from '../api.js'
+import Portal from './Portal.jsx'
 
 export default function SearchModal({ open, row, col, turn, playerName, usedIds, checking, timeLeft, onPick, onClose }) {
   const [query, setQuery] = useState('')
@@ -42,8 +43,15 @@ export default function SearchModal({ open, row, col, turn, playerName, usedIds,
     }
   }, [query])
 
+  // Escape closes the search even when the input isn't focused
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
   const onKeyDown = (e) => {
-    if (e.key === 'Escape') onClose()
     if (!results.length) return
     if (e.key === 'ArrowDown') {
       e.preventDefault()
@@ -61,6 +69,7 @@ export default function SearchModal({ open, row, col, turn, playerName, usedIds,
   const ring = turn === 'X' ? 'focus-within:ring-x/60' : 'focus-within:ring-o/60'
 
   return (
+    <Portal>
     <AnimatePresence>
       {open && row && col && (
         <motion.div
@@ -158,5 +167,6 @@ export default function SearchModal({ open, row, col, turn, playerName, usedIds,
         </motion.div>
       )}
     </AnimatePresence>
+    </Portal>
   )
 }

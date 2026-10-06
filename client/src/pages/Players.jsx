@@ -14,6 +14,7 @@ export default function Players() {
   const [q, setQ] = useState('')
   const [pos, setPos] = useState('ALL')
   const [nation, setNation] = useState('ALL')
+  const [sort, setSort] = useState('name')
 
   useEffect(() => {
     api.players().then((r) => setData(r.results)).catch((e) => setError(e.message))
@@ -24,13 +25,14 @@ export default function Players() {
   const filtered = useMemo(() => {
     if (!data) return []
     const nq = norm(q)
-    return data.filter(
+    const list = data.filter(
       (p) =>
         (pos === 'ALL' || p.position === pos) &&
         (nation === 'ALL' || p.nationality === nation) &&
         (!nq || norm(p.name).includes(nq) || p.clubs.some((c) => norm(c.name).includes(nq))),
     )
-  }, [data, q, pos, nation])
+    return sort === 'popular' ? [...list].sort((a, b) => (b.stats?.picked ?? 0) - (a.stats?.picked ?? 0)) : list
+  }, [data, q, pos, nation, sort])
 
   return (
     <div>
@@ -62,6 +64,14 @@ export default function Players() {
           {nations.map((n) => (
             <option key={n}>{n}</option>
           ))}
+        </select>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="cursor-pointer rounded-xl bg-black/30 px-3 py-2.5 outline-none [&>option]:bg-pitch-900"
+        >
+          <option value="name">A → Z</option>
+          <option value="popular">Most picked</option>
         </select>
         <div className="flex rounded-xl bg-black/30 p-1">
           {POSITIONS.map((p) => (
@@ -99,6 +109,11 @@ export default function Players() {
                   <div className="truncate font-bold">{p.name}</div>
                   <div className="text-xs text-white/50">{p.nationality}</div>
                 </div>
+                {p.stats?.picked > 0 && (
+                  <span className="rounded-md bg-emerald-400/15 px-2 py-0.5 text-[10px] font-bold text-emerald-200" title={`${p.stats.correct} correct`}>
+                    🎯 {p.stats.picked}
+                  </span>
+                )}
                 <span className="rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-bold">{p.position}</span>
               </div>
               <div className="mt-3 flex flex-wrap gap-1.5">

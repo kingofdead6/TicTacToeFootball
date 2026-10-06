@@ -1,8 +1,22 @@
 import { randomUUID } from 'node:crypto'
-import { players } from './data/players.js'
+import { players as seedPlayers } from './data/players.js'
 import { allCategories, categoryById, nationIdByName } from './data/categories.js'
 
+// Live footballer list: starts from the static seed and is replaced by MongoDB data once connected
+export let players = seedPlayers
 export const playerById = new Map(players.map((p) => [p.id, p]))
+
+export function loadPlayers(list) {
+  // Ignore any club/award id that isn't a known category
+  players = list.map((p) => ({
+    ...p,
+    clubs: p.clubs.filter((id) => categoryById.has(id)),
+    awards: p.awards.filter((id) => categoryById.has(id)),
+  }))
+  playerById.clear()
+  for (const p of players) playerById.set(p.id, p)
+  countCache.clear()
+}
 
 export const normalize = (s) =>
   s
@@ -63,13 +77,14 @@ export function searchPlayers(query, limit = 8) {
 
 // ---------------- Grid generation ----------------
 
+const countCache = new Map()
+
 const DIFFICULTY = {
   easy: { minAnswers: 4, pool: (c) => c.type !== 'award' && (c.type === 'nation' ? countFor(c.id) >= 15 : countFor(c.id) >= 12) },
   medium: { minAnswers: 2, pool: (c) => countFor(c.id) >= 6 },
   hard: { minAnswers: 1, pool: (c) => countFor(c.id) >= 3 },
 }
 
-const countCache = new Map()
 function countFor(catId) {
   if (!countCache.has(catId)) countCache.set(catId, players.filter((p) => matches(p, catId)).length)
   return countCache.get(catId)

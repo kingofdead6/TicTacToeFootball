@@ -12,7 +12,8 @@
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^14.0.0",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "socket.io-client": "^4.8.4"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

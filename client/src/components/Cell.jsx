@@ -12,7 +12,7 @@ const MARK_STYLE = {
   },
 }
 
-export default function Cell({ index, value, turn, onClick, disabled, shake, isWinning, answerCount, solutions, cpuTarget }) {
+export default function Cell({ index, value, turn, onClick, disabled, shake, isWinning, answerCount, solutions, cpuTarget, focusMark = 'O' }) {
   const hover = turn === 'X' ? 'hover:border-x/70 hover:shadow-x/20' : 'hover:border-o/70 hover:shadow-o/20'
 
   return (
@@ -73,7 +73,7 @@ export default function Cell({ index, value, turn, onClick, disabled, shake, isW
           )}
           {cpuTarget && (
             <motion.span
-              className="absolute inset-0 rounded-2xl border-2 border-o"
+              className={`absolute inset-0 rounded-2xl border-2 border-dashed ${focusMark === 'X' ? 'border-x' : 'border-o'}`}
               animate={{ opacity: [0.2, 1, 0.2] }}
               transition={{ duration: 0.6, repeat: Infinity }}
             />
