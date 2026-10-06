@@ -56,7 +56,7 @@ export default function MatchFeed({ room, feed, onSend, onReact }) {
               >
                 <div
                   className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
-                    mine ? 'rounded-br-sm bg-emerald-400/20' : item.mark === 'X' ? 'rounded-bl-sm bg-x/15' : 'rounded-bl-sm bg-o/15'
+                    mine ? 'rounded-br-sm bg-orange-400/20' : item.mark === 'X' ? 'rounded-bl-sm bg-x/15' : 'rounded-bl-sm bg-o/15'
                   }`}
                 >
                   {!mine && <div className={`text-[10px] font-bold ${markColor}`}>{item.name}</div>}
@@ -75,7 +75,7 @@ export default function MatchFeed({ room, feed, onSend, onReact }) {
             whileHover={{ scale: 1.3, y: -3 }}
             whileTap={{ scale: 0.8 }}
             onClick={() => onReact(r)}
-            className={`cursor-pointer rounded-lg px-1.5 py-1 hover:bg-white/10 ${r === 'GG' ? 'font-display text-lg text-emerald-200' : 'text-xl'}`}
+            className={`cursor-pointer rounded-lg px-1.5 py-1 hover:bg-white/10 ${r === 'GG' ? 'font-display text-lg text-orange-200' : 'text-xl'}`}
           >
             {r}
           </motion.button>
@@ -87,7 +87,7 @@ export default function MatchFeed({ room, feed, onSend, onReact }) {
           maxLength={140}
           onChange={(e) => setText(e.target.value)}
           placeholder="Say something…"
-          className="flex-1 rounded-xl bg-black/30 px-3 py-2 text-sm outline-none ring-emerald-300/50 focus:ring-2"
+          className="flex-1 rounded-xl bg-black/30 px-3 py-2 text-sm outline-none ring-orange-300/50 focus:ring-2"
         />
         <button type="submit" disabled={!text.trim()} className="btn-primary px-4 py-2 text-sm">
           ➤

@@ -118,7 +118,7 @@ export default function SearchModal({ open, row, col, turn, playerName, usedIds,
                   placeholder="Search a player…"
                   className="w-full bg-transparent py-4 text-lg outline-none placeholder:text-white/30"
                 />
-                {(loading || checking) && <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-emerald-300" />}
+                {(loading || checking) && <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-orange-300" />}
               </div>
 
               <ul className="mt-3 max-h-72 space-y-1 overflow-y-auto">

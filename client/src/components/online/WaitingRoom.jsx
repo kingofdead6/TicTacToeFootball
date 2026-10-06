@@ -32,7 +32,7 @@ export default function WaitingRoom({ room, onLeave }) {
             initial={{ y: -60, opacity: 0, rotateX: 90 }}
             animate={{ y: 0, opacity: 1, rotateX: 0 }}
             transition={{ delay: i * 0.08, type: 'spring', stiffness: 260, damping: 15 }}
-            className="glass grid h-16 w-12 place-items-center rounded-2xl font-display text-5xl text-emerald-200 shadow-lg shadow-emerald-500/10 sm:h-20 sm:w-16 sm:text-6xl"
+            className="glass grid h-16 w-12 place-items-center rounded-2xl font-display text-5xl text-orange-200 shadow-lg shadow-orange-500/10 sm:h-20 sm:w-16 sm:text-6xl"
           >
             {ch}
           </motion.span>
@@ -53,7 +53,7 @@ export default function WaitingRoom({ room, onLeave }) {
         {[0, 1, 2].map((i) => (
           <motion.span
             key={i}
-            className="absolute inset-0 rounded-full border-2 border-emerald-300/40"
+            className="absolute inset-0 rounded-full border-2 border-orange-300/40"
             initial={{ scale: 0.3, opacity: 0.8 }}
             animate={{ scale: 1.4, opacity: 0 }}
             transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.8, ease: 'easeOut' }}
@@ -99,7 +99,7 @@ export function SeatCard({ seat, mark, label }) {
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className={`rounded-2xl border p-4 ${isX ? 'border-x/40 bg-x/10' : 'border-o/40 bg-o/10'}`}
+      className={`rounded-[18px] p-4 ring-2 ${isX ? 'bg-blue-500 ring-blue-300/50' : 'bg-orange-500 ring-orange-200/60'}`}
     >
       <div className="text-4xl">{seat.avatar}</div>
       <div className="mt-2 truncate font-bold">{seat.name}</div>

@@ -1,21 +1,64 @@
 @import 'tailwindcss';
 
+/* SEC Welcome Day 2026 visual identity (Figma: WD 2026 VI) */
 @theme {
-  --font-display: 'Bebas Neue', system-ui, sans-serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Darker Grotesque', system-ui, sans-serif;
+  --font-sans: 'Poppins', system-ui, sans-serif;
+  --font-jp: 'Kosugi Maru', 'Darker Grotesque', sans-serif;
 
-  --color-pitch-950: #03140c;
-  --color-pitch-900: #062216;
-  --color-pitch-800: #0a3321;
-  --color-pitch-700: #0f4a2f;
-  --color-x: #38bdf8;
-  --color-x-deep: #0369a1;
-  --color-o: #fb7185;
-  --color-o-deep: #be123c;
-  --color-gold: #fbbf24;
+  /* Brand blue — color-500 is the primary #013388 */
+  --color-blue-50: #d4ddeb;
+  --color-blue-100: #aabbd7;
+  --color-blue-200: #8099c4;
+  --color-blue-300: #5677b0;
+  --color-blue-400: #2b559c;
+  --color-blue-500: #013388;
+  --color-blue-600: #012b71;
+  --color-blue-700: #01225b;
+  --color-blue-800: #011a44;
+  --color-blue-900: #00112d;
+  --color-blue-950: #000a1c;
+
+  /* Brand orange — color-500 is #ff4d00 */
+  --color-orange-50: #ffe2d5;
+  --color-orange-100: #ffc4aa;
+  --color-orange-200: #ffa680;
+  --color-orange-300: #ff8855;
+  --color-orange-400: #ff6b2b;
+  --color-orange-500: #ff4d00;
+  --color-orange-600: #d54000;
+  --color-orange-700: #aa3300;
+  --color-orange-800: #802700;
+  --color-orange-900: #551a00;
+  --color-orange-950: #2b0d00;
+
+  /* Brand navy — color-500 is #01092d */
+  --color-navy-100: #aaadb9;
+  --color-navy-200: #808496;
+  --color-navy-300: #565b73;
+  --color-navy-400: #2b3250;
+  --color-navy-500: #01092d;
+  --color-navy-600: #010826;
+  --color-navy-700: #01061e;
+  --color-navy-800: #010517;
+  --color-navy-900: #00030f;
+  --color-ink: #161616;
+  --color-paper: #f5f5f5;
+
+  /* Legacy names used across the app, mapped onto the brand */
+  --color-pitch-950: #01092d;
+  --color-pitch-900: #011a44;
+  --color-pitch-800: #01225b;
+  --color-pitch-700: #012b71;
+
+  /* Player marks: X = Blue Lock blue, O = Haikyuu orange */
+  --color-x: #6f93d9;
+  --color-x-deep: #013388;
+  --color-o: #ff6b2b;
+  --color-o-deep: #d54000;
+  --color-gold: #ffa680;
 
   --animate-float: float 6s ease-in-out infinite;
-  --animate-spin-slow: spin 18s linear infinite;
   --animate-shimmer: shimmer 3s linear infinite;
 
   @keyframes float {
@@ -33,34 +76,55 @@ html, body, #root {
 }
 
 body {
-  @apply bg-pitch-950 text-white font-sans antialiased;
+  @apply bg-navy-500 text-white font-sans antialiased;
   overflow-x: hidden;
 }
 
-@utility glass {
-  @apply bg-white/[0.06] border border-white/10 backdrop-blur-xl;
+/* Darker Grotesque defaults: heavy and tight. In the components layer so
+   font-* / leading-* utilities still override it */
+@layer components {
+  .font-display {
+    font-weight: 800;
+    line-height: 0.95;
+  }
 }
 
+/* Dark navy panel (replaces the old glassmorphism) */
+@utility glass {
+  @apply bg-blue-900/70 border border-blue-400/30 backdrop-blur-md;
+}
+
+/* White card from the "Goals & Vision" section */
+@utility card-paper {
+  @apply bg-white text-blue-500 rounded-[10px];
+}
+
+/* Brand gradient text: Blue Lock blue → white → Haikyuu orange */
 .text-gradient {
-  background: linear-gradient(90deg, #a7f3d0, #fde68a, #a7f3d0);
+  background: linear-gradient(90deg, #2b6be8, #ffffff 45%, #ff4d00);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shimmer 4s linear infinite;
+  animation: shimmer 5s linear infinite;
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-semibold transition-all duration-200
-    active:scale-95 disabled:opacity-40 disabled:pointer-events-none cursor-pointer;
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-display text-xl font-extrabold
+    transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:pointer-events-none cursor-pointer;
 }
+/* Orange action button (the arrow button in "Get in touch") */
 @utility btn-primary {
-  @apply btn bg-linear-to-r from-emerald-400 to-lime-300 text-pitch-950 shadow-lg shadow-emerald-500/30
-    hover:shadow-emerald-400/50 hover:brightness-110;
+  @apply btn bg-orange-500 text-white shadow-lg shadow-orange-500/30 hover:bg-orange-400 hover:shadow-orange-500/50;
 }
+/* Navy pill (the "Register Now !" button) */
 @utility btn-ghost {
-  @apply btn glass text-white/90 hover:bg-white/10;
+  @apply btn border border-blue-300/40 bg-blue-800/80 text-white hover:border-blue-200/60 hover:bg-blue-600;
+}
+/* Royal blue solid */
+@utility btn-blue {
+  @apply btn bg-blue-500 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-400;
 }
 
 /* Thin scrollbars */
-* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.2) transparent; }
+* { scrollbar-width: thin; scrollbar-color: rgba(170,187,215,.35) transparent; }

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import Segmented from '../Segmented.jsx'
 import { useProfile } from '../../profile.jsx'
 import { api } from '../../api.js'
+import { SectionTitle } from '../Brand.jsx'
 
 const CODE_LEN = 6
 
@@ -32,15 +33,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
   return (
     <div>
       <div className="mb-8 text-center">
-        <motion.h1
-          initial={{ letterSpacing: '0.5em', opacity: 0 }}
-          animate={{ letterSpacing: '0.05em', opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="font-display text-6xl sm:text-7xl"
-        >
-          <span className="text-gradient">LIVE</span> MATCHES
-        </motion.h1>
-        <p className="mt-2 text-white/55">Create a room, send the code to a friend, and play head-to-head in real time.</p>
+        <SectionTitle sub="Create a room, send the code to a friend, and play head-to-head in real time.">Play online</SectionTitle>
         {live && (
           <div className="mt-4 inline-flex flex-wrap justify-center gap-2 text-xs">
             <LiveStat icon="🟢" label="online now" value={live.online} />
@@ -57,7 +50,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
             <span className="text-4xl">{profile.avatar}</span>
             <div className="flex-1 text-center sm:text-left">
               <div className="font-bold">
-                Playing as <span className="text-emerald-300">@{profile.username}</span>
+                Playing as <span className="text-orange-300">@{profile.username}</span>
               </div>
               <div className="text-xs text-white/50">
                 Rating {profile.rating} · matches against other card holders are ranked 🏆
@@ -75,7 +68,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
               maxLength={18}
               onChange={(e) => setGuestName(e.target.value)}
               placeholder="Guest name"
-              className="w-full flex-1 rounded-xl bg-black/30 px-4 py-2.5 font-semibold outline-none ring-emerald-300/50 focus:ring-2"
+              className="w-full flex-1 rounded-xl bg-black/30 px-4 py-2.5 font-semibold outline-none ring-orange-300/50 focus:ring-2"
             />
             {dbAvailable && (
               <button onClick={openModal} className="btn-primary whitespace-nowrap px-4 py-2 text-sm">
@@ -89,7 +82,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
       <div className="mx-auto grid max-w-3xl gap-5 md:grid-cols-2">
         {/* Create */}
         <motion.section initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="glass relative overflow-hidden rounded-3xl p-6">
-          <div className="absolute -left-16 -top-16 h-40 w-40 rounded-full bg-sky-400/15 blur-3xl" />
+          <div className="absolute -left-16 -top-16 h-40 w-40 rounded-full bg-blue-400/15 blur-3xl" />
           <h2 className="relative font-display text-3xl tracking-wide">🏟️ Create a room</h2>
           <Label>Grid difficulty</Label>
           <Segmented
@@ -130,7 +123,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
             whileTap={{ scale: 0.97 }}
             disabled={busy}
             onClick={() => onCreate({ difficulty, timer, bestOf })}
-            className="btn-primary relative mt-6 w-full py-4 font-display text-2xl tracking-widest"
+            className="btn-primary relative mt-6 w-full py-4 text-3xl font-black"
           >
             CREATE ROOM
           </motion.button>
@@ -157,7 +150,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
                       {preview.host?.rating ? ` · ${preview.host.rating} rating` : ''}
                     </div>
                   </div>
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${preview.full ? 'bg-rose-400/20 text-rose-200' : 'bg-emerald-400/20 text-emerald-200'}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${preview.full ? 'bg-rose-400/20 text-rose-200' : 'bg-orange-400/20 text-orange-200'}`}>
                     {preview.full ? 'FULL' : 'OPEN'}
                   </span>
                 </div>
@@ -170,7 +163,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
             whileTap={{ scale: 0.97 }}
             disabled={busy || code.length !== CODE_LEN || preview?.notFound || preview?.full}
             onClick={() => onJoin(code)}
-            className="btn relative mt-auto w-full bg-linear-to-r from-rose-400 to-orange-300 py-4 font-display text-2xl tracking-widest text-pitch-950 shadow-lg shadow-rose-500/30"
+            className="btn-blue relative mt-auto w-full py-4 text-3xl font-black"
           >
             JOIN MATCH
           </motion.button>
@@ -203,7 +196,7 @@ function CodeInput({ value, onChange, onEnter }) {
               key={i}
               animate={ch ? { scale: [1.2, 1], rotate: [8, 0] } : { scale: 1 }}
               className={`grid aspect-[3/4] flex-1 place-items-center rounded-xl border-2 font-display text-3xl transition-colors sm:text-4xl ${
-                ch ? 'border-emerald-300/70 bg-emerald-300/10' : active ? 'border-white/50 bg-white/5' : 'border-white/10 bg-black/20'
+                ch ? 'border-orange-300/70 bg-orange-300/10' : active ? 'border-white/50 bg-white/5' : 'border-white/10 bg-black/20'
               }`}
             >
               {ch ?? (active ? <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }} className="h-7 w-0.5 bg-white/60" /> : '')}

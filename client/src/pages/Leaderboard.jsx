@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { api } from '../api.js'
 import { useProfile } from '../profile.jsx'
+import { SectionTitle } from '../components/Brand.jsx'
+import { brand } from '../assets/brand/index.js'
 import Portal from '../components/Portal.jsx'
 
 const PODIUM = [
   { place: 2, height: 'h-28', color: 'from-slate-200/30 to-slate-400/5', medal: '🥈' },
-  { place: 1, height: 'h-40', color: 'from-amber-200/40 to-amber-500/5', medal: '🥇' },
+  { place: 1, height: 'h-40', color: 'from-orange-200/40 to-orange-500/5', medal: '🥇' },
   { place: 3, height: 'h-20', color: 'from-orange-300/30 to-orange-600/5', medal: '🥉' },
 ]
 
@@ -38,13 +40,12 @@ export default function Leaderboard() {
     <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
       <section>
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="font-display text-5xl tracking-wide">Leaderboard</h1>
-            <p className="text-sm text-white/50">Elo ratings from ranked online matches between player cards</p>
-          </div>
+          <SectionTitle align="left" sub="Elo ratings from ranked online matches between player cards">
+            Leaderboard
+          </SectionTitle>
           {profile?.rank && (
             <div className="glass rounded-2xl px-4 py-2 text-sm">
-              Your rank <span className="font-display text-2xl text-amber-200">#{profile.rank}</span>
+              Your rank <span className="font-display text-2xl text-orange-200">#{profile.rank}</span>
             </div>
           )}
         </div>
@@ -81,7 +82,7 @@ export default function Leaderboard() {
                           {p.avatar}
                         </motion.div>
                         <div className="mt-1 max-w-28 truncate font-bold">{p.username}</div>
-                        <div className="font-display text-2xl text-amber-200">{p.rating}</div>
+                        <div className="font-display text-2xl text-orange-200">{p.rating}</div>
                       </button>
                     ) : (
                       <div className="mb-2 text-4xl opacity-20">❔</div>
@@ -114,20 +115,20 @@ export default function Leaderboard() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: Math.min(i * 0.04, 0.6) }}
                     className={`grid w-full cursor-pointer grid-cols-[2.5rem_1fr_4rem_5.5rem_3rem] items-center gap-2 px-4 py-3 text-left transition-colors hover:bg-white/5 sm:grid-cols-[2.5rem_1fr_4rem_6rem_4rem_3.5rem] ${
-                      mine ? 'bg-emerald-400/10 ring-1 ring-inset ring-emerald-300/40' : i % 2 ? 'bg-white/[0.02]' : ''
+                      mine ? 'bg-orange-400/10 ring-1 ring-inset ring-orange-300/40' : i % 2 ? 'bg-white/[0.02]' : ''
                     }`}
                   >
-                    <span className={`font-display text-xl ${i < 3 ? 'text-amber-200' : 'text-white/40'}`}>{r.rank}</span>
+                    <span className={`font-display text-xl ${i < 3 ? 'text-orange-200' : 'text-white/40'}`}>{r.rank}</span>
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="text-xl">{r.avatar}</span>
                       <span className="truncate font-semibold">
                         {r.username}
-                        {mine && <span className="ml-1 text-[10px] text-emerald-300">YOU</span>}
+                        {mine && <span className="ml-1 text-[10px] text-orange-300">YOU</span>}
                       </span>
                     </span>
                     <span className="text-right font-display text-2xl">{r.rating}</span>
                     <span className="text-center text-sm">
-                      <span className="text-emerald-300">{r.stats.wins}</span>-<span className="text-white/50">{r.stats.draws}</span>-
+                      <span className="text-orange-300">{r.stats.wins}</span>-<span className="text-white/50">{r.stats.draws}</span>-
                       <span className="text-rose-300">{r.stats.losses}</span>
                     </span>
                     <span className="hidden text-center text-sm text-white/70 sm:block">{r.stats.winRate}%</span>
@@ -163,7 +164,7 @@ export default function Leaderboard() {
                 </div>
                 <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <motion.div
-                    className="h-full rounded-full bg-linear-to-r from-emerald-400 to-lime-300"
+                    className="h-full rounded-full bg-linear-to-r from-orange-400 to-orange-300"
                     initial={{ width: 0 }}
                     animate={{ width: `${(p.count / stats.mostPicked[0].count) * 100}%` }}
                     transition={{ delay: 0.2 + i * 0.05, duration: 0.6 }}
@@ -197,7 +198,7 @@ function MatchRow({ m, i }) {
     <span className={`flex min-w-0 items-center gap-1 ${right ? 'flex-row-reverse' : ''}`}>
       <span>{p.avatar}</span>
       <span className={`truncate ${won ? 'font-bold text-white' : 'text-white/60'}`}>{p.name}</span>
-      {delta(p) != null && <span className={`text-[10px] ${delta(p) >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{delta(p) >= 0 ? `+${delta(p)}` : delta(p)}</span>}
+      {delta(p) != null && <span className={`text-[10px] ${delta(p) >= 0 ? 'text-orange-300' : 'text-rose-300'}`}>{delta(p) >= 0 ? `+${delta(p)}` : delta(p)}</span>}
     </span>
   )
   return (
@@ -251,7 +252,7 @@ function ProfileDrawer({ username, onClose }) {
                     {data.avatar}
                   </motion.div>
                   <h2 className="mt-2 font-display text-4xl">{data.username}</h2>
-                  <div className="font-display text-3xl text-amber-200">{data.rating}</div>
+                  <div className="font-display text-3xl text-orange-200">{data.rating}</div>
                   <div className="text-xs text-white/40">peak {data.peakRating}</div>
                 </div>
                 <div className="mt-6 grid grid-cols-3 gap-2 text-center">
@@ -292,7 +293,7 @@ function Stat({ label, value, live }) {
   return (
     <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass relative rounded-2xl p-4 text-center">
       {live && <span className="absolute right-3 top-3 h-2 w-2 animate-pulse rounded-full bg-rose-400" />}
-      <div className="font-display text-4xl text-emerald-300">{value}</div>
+      <div className="font-display text-4xl text-orange-300">{value}</div>
       <div className="text-[11px] uppercase tracking-wider text-white/50">{label}</div>
     </motion.div>
   )
@@ -300,11 +301,16 @@ function Stat({ label, value, live }) {
 
 function Empty({ icon, text, action }) {
   return (
-    <div className="glass rounded-2xl p-10 text-center">
-      <motion.div className="text-5xl" animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-        {icon}
-      </motion.div>
-      <p className="mt-3 text-white/60">{text}</p>
+    <div className="card-paper relative overflow-hidden p-10 text-center shadow-xl shadow-black/30">
+      <img src={brand.brushSplit2} alt="" className="pointer-events-none absolute -left-10 -bottom-8 w-56 rotate-[24.89deg] opacity-40" />
+      <motion.img
+        src={brand.stickers.cat}
+        alt={icon}
+        className="relative mx-auto w-40 drop-shadow-lg"
+        animate={{ rotate: [0, 6, -6, 0], y: [0, -6, 0] }}
+        transition={{ duration: 3, repeat: Infinity }}
+      />
+      <p className="relative mt-3 font-medium text-blue-500">{text}</p>
       {action && (
         <button onClick={action.onClick} className="btn-primary mt-5">
           {action.label}

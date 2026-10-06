@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { api } from '../api.js'
 import { ClubCrest, Flag } from '../components/CategoryBadge.jsx'
+import { SectionTitle } from '../components/Brand.jsx'
 
 const AWARD_ICON = { ballon: '⚽', trophy: '🏆', star: '⭐' }
 const POSITIONS = ['ALL', 'GK', 'DF', 'MF', 'FW']
@@ -37,13 +38,12 @@ export default function Players() {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-display text-5xl tracking-wide">Player database</h1>
-          <p className="text-sm text-white/50">Every player the API knows about — served from <code className="rounded bg-white/10 px-1">GET /api/players</code></p>
-        </div>
+        <SectionTitle align="left" sub="Every footballer in the game, with their clubs and trophies">
+          Footballers
+        </SectionTitle>
         {data && (
-          <div className="text-sm text-white/50">
-            <span className="font-display text-3xl text-emerald-300">{filtered.length}</span> / {data.length} players
+          <div className="flex items-center gap-2 font-display text-xl font-extrabold text-blue-100">
+            <span className="grid h-14 min-w-14 place-items-center rounded-[18px] bg-orange-500 px-2 text-3xl font-black text-white">{filtered.length}</span>/ {data.length}
           </div>
         )}
       </div>
@@ -53,7 +53,7 @@ export default function Players() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search by player or club…"
-          className="flex-1 rounded-xl bg-black/30 px-4 py-2.5 outline-none ring-emerald-300/50 focus:ring-2"
+          className="flex-1 rounded-xl bg-black/30 px-4 py-2.5 outline-none ring-orange-300/50 focus:ring-2"
         />
         <select
           value={nation}
@@ -80,7 +80,7 @@ export default function Players() {
               onClick={() => setPos(p)}
               className={`relative cursor-pointer rounded-lg px-3 py-1.5 text-xs font-bold ${pos === p ? 'text-pitch-950' : 'text-white/60'}`}
             >
-              {pos === p && <motion.span layoutId="pos-pill" className="absolute inset-0 rounded-lg bg-emerald-300" />}
+              {pos === p && <motion.span layoutId="pos-pill" className="absolute inset-0 rounded-lg bg-orange-300" />}
               <span className="relative">{p}</span>
             </button>
           ))}
@@ -110,7 +110,7 @@ export default function Players() {
                   <div className="text-xs text-white/50">{p.nationality}</div>
                 </div>
                 {p.stats?.picked > 0 && (
-                  <span className="rounded-md bg-emerald-400/15 px-2 py-0.5 text-[10px] font-bold text-emerald-200" title={`${p.stats.correct} correct`}>
+                  <span className="rounded-md bg-orange-400/15 px-2 py-0.5 text-[10px] font-bold text-orange-200" title={`${p.stats.correct} correct`}>
                     🎯 {p.stats.picked}
                   </span>
                 )}
@@ -126,7 +126,7 @@ export default function Players() {
               {p.awards.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {p.awards.map((a) => (
-                    <span key={a.id} className="rounded-full bg-amber-300/15 px-2 py-0.5 text-[10px] font-semibold text-amber-200">
+                    <span key={a.id} className="rounded-full bg-orange-300/15 px-2 py-0.5 text-[10px] font-semibold text-orange-200">
                       {AWARD_ICON[a.icon]} {a.name}
                     </span>
                   ))}

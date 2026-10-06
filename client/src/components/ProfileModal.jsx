@@ -68,14 +68,14 @@ export default function ProfileModal() {
             transition={{ type: 'spring', stiffness: 280, damping: 24 }}
             className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-pitch-900/95 p-6 shadow-2xl sm:p-8"
           >
-            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-emerald-400/15 blur-3xl" />
+            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-orange-400/15 blur-3xl" />
 
             {/* Card preview */}
             <motion.div
               layout
-              className="relative mx-auto mb-6 flex w-56 flex-col items-center rounded-3xl border border-amber-200/30 bg-linear-to-b from-amber-200/20 via-amber-500/10 to-transparent p-5 shadow-xl shadow-amber-500/10"
+              className="relative mx-auto mb-6 flex w-56 flex-col items-center rounded-3xl border border-orange-200/30 bg-linear-to-b from-orange-200/20 via-orange-500/10 to-transparent p-5 shadow-xl shadow-orange-500/10"
             >
-              <div className="absolute left-4 top-3 text-left font-display leading-none text-amber-200">
+              <div className="absolute left-4 top-3 text-left font-display leading-none text-orange-200">
                 <div className="text-3xl">{profile?.rating ?? 1000}</div>
                 <div className="text-[10px] tracking-widest">RATING</div>
               </div>
@@ -97,14 +97,14 @@ export default function ProfileModal() {
             </p>
 
             {dbAvailable === false && (
-              <p className="mb-4 rounded-xl bg-amber-400/10 p-3 text-xs text-amber-200">
+              <p className="mb-4 rounded-xl bg-orange-400/10 p-3 text-xs text-orange-200">
                 The database isn't connected yet, so profiles are unavailable. You can still play online as a guest.
               </p>
             )}
 
             {!profile && (
               <label className="block">
-                <div className="flex items-center gap-2 rounded-2xl bg-black/30 px-4 ring-2 ring-white/10 focus-within:ring-emerald-300/60">
+                <div className="flex items-center gap-2 rounded-2xl bg-black/30 px-4 ring-2 ring-white/10 focus-within:ring-orange-300/60">
                   <span className="text-white/40">@</span>
                   <input
                     autoFocus
@@ -114,7 +114,7 @@ export default function ProfileModal() {
                     placeholder="username"
                     className="w-full bg-transparent py-3 font-semibold outline-none placeholder:text-white/25"
                   />
-                  {check && <span className={`text-xs font-semibold ${check.available ? 'text-emerald-300' : 'text-rose-300'}`}>{check.available ? '✓ free' : '✗'}</span>}
+                  {check && <span className={`text-xs font-semibold ${check.available ? 'text-orange-300' : 'text-rose-300'}`}>{check.available ? '✓ free' : '✗'}</span>}
                 </div>
                 {check && !check.available && <span className="mt-1 block text-xs text-rose-300">{check.reason}</span>}
               </label>
@@ -129,7 +129,7 @@ export default function ProfileModal() {
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setAvatar(a)}
                   className={`grid aspect-square cursor-pointer place-items-center rounded-xl text-lg transition-colors ${
-                    avatar === a ? 'bg-emerald-300/25 ring-2 ring-emerald-300' : 'bg-white/5 hover:bg-white/10'
+                    avatar === a ? 'bg-orange-300/25 ring-2 ring-orange-300' : 'bg-white/5 hover:bg-white/10'
                   }`}
                 >
                   {a}

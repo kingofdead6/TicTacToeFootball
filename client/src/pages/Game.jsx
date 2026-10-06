@@ -8,6 +8,8 @@ import SearchModal from '../components/SearchModal.jsx'
 import ResultModal from '../components/ResultModal.jsx'
 import Toasts from '../components/Toasts.jsx'
 import WinLine from '../components/WinLine.jsx'
+import { StatTile } from '../components/Brand.jsx'
+import { brand } from '../assets/brand/index.js'
 
 const LINES = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -264,15 +266,15 @@ export default function Game({ settings, onExit }) {
   if (!grid)
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-32">
-        <motion.div
-          className="text-6xl"
+        <motion.img
+          src={brand.ball}
+          alt=""
+          className="h-16 w-16 rounded-full"
           animate={{ y: [0, -40, 0], rotate: [0, 360] }}
           transition={{ duration: 0.9, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          ⚽
-        </motion.div>
+        />
         <motion.div className="h-2 w-12 rounded-full bg-black/40" animate={{ scaleX: [1, 0.5, 1] }} transition={{ duration: 0.9, repeat: Infinity }} />
-        <p className="font-display text-2xl tracking-widest text-white/60">DRAWING THE GRID…</p>
+        <p className="font-display text-3xl font-black tracking-widest text-white/80">DRAWING THE GRID…</p>
       </div>
     )
 
@@ -289,12 +291,9 @@ export default function Game({ settings, onExit }) {
       {/* Scoreboard */}
       <div className="mb-6 grid w-full max-w-2xl grid-cols-[1fr_auto_1fr] items-center gap-3">
         <PlayerCard mark="X" name={names[0]} score={scores.X} active={turn === 'X' && !result} timer={timer} timeLeft={timeLeft} />
-        <div className="text-center">
-          <div className="font-display text-sm tracking-[0.3em] text-white/40">ROUND</div>
-          <motion.div key={round} initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="font-display text-4xl">
-            {round}
-          </motion.div>
-          <div className="text-[10px] uppercase tracking-widest text-white/40">{difficulty}</div>
+        <div className="flex flex-col items-center">
+          <StatTile label="Round" value={round} />
+          <div className="mt-1 font-display text-sm font-extrabold uppercase tracking-widest text-blue-100">{difficulty}</div>
         </div>
         <PlayerCard mark="O" name={names[1]} score={scores.O} active={turn === 'O' && !result} timer={timer} timeLeft={timeLeft} thinking={isCpuTurn && !result} alignRight />
       </div>
@@ -319,8 +318,8 @@ export default function Game({ settings, onExit }) {
                 <div className="text-4xl">🏁</div>
               ) : (
                 <>
-                  <div className={`font-display text-5xl leading-none sm:text-6xl ${turn === 'X' ? 'text-x' : 'text-o'}`}>{turn}</div>
-                  <div className="text-[9px] font-semibold uppercase tracking-widest text-white/50 sm:text-[10px]">to play</div>
+                  <div className={`font-display text-6xl font-black leading-none sm:text-7xl ${turn === 'X' ? 'text-blue-400' : 'text-orange-500'}`}>{turn}</div>
+                  <div className="font-display text-sm font-extrabold uppercase tracking-widest text-white/70">to play</div>
                 </>
               )}
             </motion.div>
@@ -402,17 +401,17 @@ function PlayerCard({ mark, name, score, active, timer, timeLeft, thinking, alig
   const pct = timer ? Math.max(0, timeLeft / timer) : 1
   return (
     <motion.div
-      animate={{ scale: active ? 1.03 : 0.97, opacity: active ? 1 : 0.55 }}
+      animate={{ scale: active ? 1.03 : 0.96, opacity: active ? 1 : 0.7 }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-      className={`relative overflow-hidden rounded-2xl border px-4 py-3 ${
-        isX ? 'border-x/40 bg-x/10' : 'border-o/40 bg-o/10'
-      } ${active ? (isX ? 'shadow-lg shadow-x/25' : 'shadow-lg shadow-o/25') : ''}`}
+      className={`relative overflow-hidden rounded-[18px] px-3 py-3 ring-2 sm:px-4 ${
+        isX ? 'bg-blue-500 ring-blue-300/50' : 'bg-orange-500 ring-orange-200/60'
+      } ${active ? (isX ? 'shadow-xl shadow-blue-500/40' : 'shadow-xl shadow-orange-500/40') : ''}`}
     >
       <div className={`flex items-center gap-3 ${alignRight ? 'flex-row-reverse text-right' : ''}`}>
-        <span className={`font-display text-4xl leading-none ${isX ? 'text-x' : 'text-o'}`}>{mark}</span>
+        <span className="hidden font-display text-5xl font-black leading-none text-white/90 sm:inline">{mark}</span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-bold">{name}</div>
-          <div className="h-4 text-[11px] text-white/50">
+          <div className="truncate font-display text-lg font-black leading-none sm:text-xl">{name}</div>
+          <div className="mt-1 h-4 text-[11px] font-medium text-white/80">
             {thinking ? (
               <span className="inline-flex gap-0.5">
                 thinking
@@ -429,13 +428,18 @@ function PlayerCard({ mark, name, score, active, timer, timeLeft, thinking, alig
             )}
           </div>
         </div>
-        <motion.span key={score} initial={{ scale: 1.8, color: '#fde68a' }} animate={{ scale: 1, color: '#ffffff' }} className="font-display text-4xl">
+        <motion.span
+          key={score}
+          initial={{ scale: 1.8, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-white font-display text-2xl font-black sm:h-12 sm:w-12 sm:text-3xl ${isX ? 'text-blue-500' : 'text-orange-500'}`}
+        >
           {score}
         </motion.span>
       </div>
       {active && timer > 0 && !thinking && (
         <motion.div
-          className={`absolute bottom-0 left-0 h-1 ${pct < 0.25 ? 'bg-rose-400' : isX ? 'bg-x' : 'bg-o'}`}
+          className={`absolute bottom-0 left-0 h-1.5 ${pct < 0.25 ? 'bg-rose-300' : 'bg-white/80'}`}
           animate={{ width: `${pct * 100}%` }}
           transition={{ duration: 1, ease: 'linear' }}
         />

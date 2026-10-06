@@ -252,9 +252,9 @@ function ConnectionPill({ status }) {
     <motion.div
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full border border-amber-300/30 bg-amber-500/20 px-4 py-2 text-xs font-semibold text-amber-100 backdrop-blur-xl"
+      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full border border-orange-300/30 bg-orange-500/20 px-4 py-2 text-xs font-semibold text-orange-100 backdrop-blur-xl"
     >
-      <span className="mr-2 inline-block h-2 w-2 animate-ping rounded-full bg-amber-300" />
+      <span className="mr-2 inline-block h-2 w-2 animate-ping rounded-full bg-orange-300" />
       {status === 'connecting' ? 'Connecting to the stadium… (the free server can take ~30s to wake up)' : 'Connection lost: reconnecting…'}
     </motion.div>
   )

@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti'
 import GridBoard from '../GridBoard.jsx'
 import SearchModal from '../SearchModal.jsx'
 import MatchFeed from './MatchFeed.jsx'
+import { StatTile } from '../Brand.jsx'
 import Portal from '../Portal.jsx'
 
 const other = (m) => (m === 'X' ? 'O' : 'X')
@@ -82,15 +83,12 @@ export default function OnlineMatch({ room, clockOffset, feed, focus, reactions,
         {/* Scoreboard */}
         <div className="mb-4 grid w-full max-w-2xl grid-cols-[1fr_auto_1fr] items-center gap-3">
           <SeatPanel room={room} mark="X" needed={needed} timeLeft={timeLeft} />
-          <div className="text-center">
-            <div className="font-display text-xs tracking-[0.3em] text-white/40">ROUND</div>
-            <motion.div key={room.round} initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="font-display text-4xl leading-none">
-              {room.round}
-            </motion.div>
-            <div className="mt-1 text-[10px] uppercase tracking-widest text-white/40">
+          <div className="flex flex-col items-center">
+            <StatTile label="Round" value={room.round} />
+            <div className="mt-1 font-display text-sm font-extrabold uppercase tracking-widest text-blue-100">
               {room.settings.bestOf === 1 ? 'single' : `best of ${room.settings.bestOf}`}
             </div>
-            {room.ranked && <div className="mt-1 rounded-full bg-amber-300/15 px-2 text-[10px] font-bold text-amber-200">RANKED</div>}
+            {room.ranked && <div className="mt-1 rounded-full bg-orange-500 px-2.5 py-0.5 font-display text-sm font-black text-white">RANKED</div>}
           </div>
           <SeatPanel room={room} mark="O" needed={needed} timeLeft={timeLeft} alignRight />
         </div>
@@ -163,7 +161,7 @@ export default function OnlineMatch({ room, clockOffset, feed, focus, reactions,
               {reactions.map((r) => (
                 <motion.div
                   key={r.id}
-                  className={`absolute bottom-0 text-5xl drop-shadow-lg ${r.emoji === 'GG' ? 'font-display text-emerald-200' : ''}`}
+                  className={`absolute bottom-0 text-5xl drop-shadow-lg ${r.emoji === 'GG' ? 'font-display text-orange-200' : ''}`}
                   style={{ left: `${r.x}%` }}
                   initial={{ y: 40, opacity: 0, scale: 0.4 }}
                   animate={{ y: -380, opacity: [0, 1, 1, 0], scale: [0.4, 1.3, 1, 0.9], rotate: [0, -15, 15, 0] }}
@@ -283,25 +281,25 @@ function SeatPanel({ room, mark, needed, timeLeft, alignRight }) {
   return (
     <motion.div
       animate={{ scale: active ? 1.03 : 0.97, opacity: active || room.status !== 'playing' ? 1 : 0.6 }}
-      className={`relative overflow-hidden rounded-2xl border px-3 py-3 sm:px-4 ${isX ? 'border-x/40 bg-x/10' : 'border-o/40 bg-o/10'} ${
-        active ? (isX ? 'shadow-lg shadow-x/25' : 'shadow-lg shadow-o/25') : ''
+      className={`relative overflow-hidden rounded-[18px] px-3 py-3 ring-2 sm:px-4 ${isX ? 'bg-blue-500 ring-blue-300/50' : 'bg-orange-500 ring-orange-200/60'} ${
+        active ? (isX ? 'shadow-xl shadow-blue-500/40' : 'shadow-xl shadow-orange-500/40') : ''
       }`}
     >
       <div className={`flex items-center gap-2 sm:gap-3 ${alignRight ? 'flex-row-reverse text-right' : ''}`}>
         <div className="relative">
-          <span className="text-3xl sm:text-4xl">{seat.avatar}</span>
+          <span className="text-2xl sm:text-4xl">{seat.avatar}</span>
           <span
-            className={`absolute -bottom-0.5 ${alignRight ? '-left-0.5' : '-right-0.5'} h-3 w-3 rounded-full ring-2 ring-pitch-900 ${seat.connected ? 'bg-emerald-400' : 'animate-pulse bg-rose-500'}`}
+            className={`absolute -bottom-0.5 ${alignRight ? '-left-0.5' : '-right-0.5'} h-3 w-3 rounded-full ring-2 ring-white ${seat.connected ? 'bg-green-400' : 'animate-pulse bg-rose-500'}`}
             title={seat.connected ? 'Online' : 'Disconnected'}
           />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-bold">
+          <div className="truncate font-display text-xl font-black leading-none">
             {seat.name}
-            {room.you === mark && <span className="ml-1 text-[10px] font-semibold text-white/40">(you)</span>}
+            {room.you === mark && <span className="ml-1 font-sans text-[10px] font-semibold text-white/70">(you)</span>}
           </div>
-          <div className="text-[11px] text-white/50">
-            <span className={`font-display text-sm ${isX ? 'text-x' : 'text-o'}`}>{mark}</span>
+          <div className="mt-0.5 text-[11px] font-medium text-white/80">
+            <span className="font-display text-base font-black">{mark}</span>
             {seat.rating ? ` · ${seat.rating}` : seat.registered ? '' : ' · guest'}
           </div>
           <div className={`mt-1 flex gap-1 ${alignRight ? 'justify-end' : ''}`}>
@@ -309,18 +307,23 @@ function SeatPanel({ room, mark, needed, timeLeft, alignRight }) {
               <motion.span
                 key={i}
                 animate={{ scale: i < room.scores[mark] ? [1.6, 1] : 1 }}
-                className={`h-2 w-4 rounded-full ${i < room.scores[mark] ? (isX ? 'bg-x' : 'bg-o') : 'bg-white/15'}`}
+                className={`h-2 w-4 rounded-full ${i < room.scores[mark] ? 'bg-white' : 'bg-white/25'}`}
               />
             ))}
           </div>
         </div>
-        <motion.span key={room.scores[mark]} initial={{ scale: 1.8, color: '#fde68a' }} animate={{ scale: 1, color: '#ffffff' }} className="font-display text-4xl">
+        <motion.span
+          key={room.scores[mark]}
+          initial={{ scale: 1.8, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-white font-display text-2xl font-black sm:h-12 sm:w-12 sm:text-3xl ${isX ? 'text-blue-500' : 'text-orange-500'}`}
+        >
           {room.scores[mark]}
         </motion.span>
       </div>
       {active && room.settings.timer > 0 && (
         <motion.div
-          className={`absolute bottom-0 left-0 h-1 ${pct < 0.25 ? 'bg-rose-400' : isX ? 'bg-x' : 'bg-o'}`}
+          className={`absolute bottom-0 left-0 h-1.5 ${pct < 0.25 ? 'bg-rose-300' : 'bg-white/80'}`}
           animate={{ width: `${pct * 100}%` }}
           transition={{ duration: 0.3, ease: 'linear' }}
         />
@@ -358,7 +361,7 @@ function MatchOverModal({ room, actions, onNavigate }) {
   const opp = other(me)
   const outcome = result.winner === null ? 'draw' : result.winner === me ? 'win' : 'loss'
   const title = { win: 'VICTORY', loss: 'DEFEAT', draw: 'DRAW' }[outcome]
-  const color = { win: 'text-emerald-300', loss: 'text-rose-300', draw: 'text-amber-300' }[outcome]
+  const color = { win: 'text-orange-300', loss: 'text-rose-300', draw: 'text-orange-300' }[outcome]
   const change = result.ratingChange?.[me]
   const oppWantsRematch = room.rematch.includes(opp)
   const iWantRematch = room.rematch.includes(me)
@@ -377,7 +380,7 @@ function MatchOverModal({ room, actions, onNavigate }) {
             className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-pitch-900/95 p-8 text-center shadow-2xl"
           >
             <motion.div
-              className={`absolute inset-x-0 -top-24 mx-auto h-56 w-56 rounded-full blur-3xl ${outcome === 'win' ? 'bg-emerald-300/25' : outcome === 'loss' ? 'bg-rose-400/20' : 'bg-amber-300/20'}`}
+              className={`absolute inset-x-0 -top-24 mx-auto h-56 w-56 rounded-full blur-3xl ${outcome === 'win' ? 'bg-orange-300/25' : outcome === 'loss' ? 'bg-rose-400/20' : 'bg-orange-300/20'}`}
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 3, repeat: Infinity }}
             />
@@ -413,7 +416,7 @@ function MatchOverModal({ room, actions, onNavigate }) {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 1.9, type: 'spring' }}
-                    className={`rounded-full px-2 py-0.5 text-sm font-bold ${change.delta > 0 ? 'bg-emerald-400/20 text-emerald-200' : change.delta < 0 ? 'bg-rose-400/20 text-rose-200' : 'bg-white/10'}`}
+                    className={`rounded-full px-2 py-0.5 text-sm font-bold ${change.delta > 0 ? 'bg-orange-400/20 text-orange-200' : change.delta < 0 ? 'bg-rose-400/20 text-rose-200' : 'bg-white/10'}`}
                   >
                     {change.delta > 0 ? '+' : ''}
                     {change.delta}

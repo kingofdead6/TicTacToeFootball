@@ -3,7 +3,7 @@ import Portal from './Portal.jsx'
 
 const TONES = {
   error: 'border-rose-400/40 bg-rose-500/20 text-rose-100',
-  success: 'border-emerald-400/40 bg-emerald-500/20 text-emerald-100',
+  success: 'border-orange-400/40 bg-orange-500/20 text-orange-100',
   info: 'border-white/15 bg-white/10 text-white',
 }
 
