@@ -1,7 +1,8 @@
 import mongoose from 'mongoose'
 import { Footballer } from './models/Footballer.js'
-import { players as seedPlayers } from './data/players.js'
-import { loadPlayers } from './game.js'
+import { Category, Meta } from './models/Category.js'
+import { allCategories } from './data/categories.js'
+import { countFor, datasetInfo, players, removePlayers } from './game.js'
 
 let ready = false
 export const isDbReady = () => ready && mongoose.connection.readyState === 1
@@ -10,9 +11,9 @@ export const isDbReady = () => ready && mongoose.connection.readyState === 1
 mongoose.set('bufferCommands', false)
 
 /**
- * Connects to MongoDB (if MONGODB_URI is set), seeds the footballer collection
- * from data/players.js and loads the collection into the in-memory game cache.
- * Without a URI the server keeps running on the static data.
+ * Connects to MongoDB (if MONGODB_URI is set) and mirrors the loaded dataset
+ * (footballers + categories) into it. Without a URI the server keeps running
+ * on the dataset file alone.
  */
 export async function connectDb(uri) {
   if (!uri) {
@@ -24,29 +25,74 @@ export async function connectDb(uri) {
     ready = true
     console.log('✅ MongoDB connected')
     mongoose.connection.on('disconnected', () => console.warn('⚠️  MongoDB disconnected'))
-    await seedFootballers()
+    await syncDataset()
     return true
   } catch (err) {
-    console.error('❌ MongoDB connection failed:', err.message)
+    console.error('❌ MongoDB error:', err.message)
     return false
   }
 }
 
-async function seedFootballers() {
-  // Upsert so edits in players.js propagate, while pick statistics are preserved
-  await Footballer.bulkWrite(
-    seedPlayers.map((p) => ({
+async function syncDataset() {
+  const meta = await Meta.findOne({ key: 'dataset' }).lean()
+  if (meta?.value?.version !== datasetInfo.version) {
+    const t = Date.now()
+    // Upsert so pick statistics survive re-imports
+    const ops = players.map((p) => ({
       updateOne: {
         filter: { slug: p.id },
         update: {
-          $set: { name: p.name, nationality: p.nationality, position: p.position, clubs: p.clubs, awards: p.awards },
+          $set: {
+            name: p.name,
+            wikidataId: p.qid ?? null,
+            nationality: p.nationality ?? null,
+            flag: p.flag ?? null,
+            position: p.position ?? '',
+            born: p.born ?? null,
+            fame: p.fame ?? 0,
+            clubs: p.clubs,
+            awards: p.awards,
+          },
           $setOnInsert: { slug: p.id },
         },
         upsert: true,
       },
-    })),
-  )
-  const all = await Footballer.find({ active: { $ne: false } }).lean()
-  loadPlayers(all.map((f) => ({ id: f.slug, name: f.name, nationality: f.nationality, position: f.position, clubs: f.clubs, awards: f.awards })))
-  console.log(`⚽ ${all.length} footballers loaded from MongoDB`)
+    }))
+    for (let i = 0; i < ops.length; i += 2000) await Footballer.bulkWrite(ops.slice(i, i + 2000), { ordered: false })
+
+    await Category.bulkWrite(
+      allCategories.map((c) => ({
+        updateOne: {
+          filter: { key: c.id },
+          update: {
+            $set: {
+              type: c.type,
+              name: c.name,
+              short: c.short,
+              country: c.country,
+              colors: c.colors,
+              flag: c.flag,
+              icon: c.icon,
+              description: c.description,
+              tier: c.tier,
+              wikidataId: c.wikidataId,
+              playerCount: countFor(c.id),
+            },
+          },
+          upsert: true,
+        },
+      })),
+    )
+    await Meta.updateOne({ key: 'dataset' }, { $set: { value: { version: datasetInfo.version, players: players.length } } }, { upsert: true })
+    console.log(`⚽ Mirrored ${players.length} footballers & ${allCategories.length} categories to MongoDB in ${((Date.now() - t) / 1000).toFixed(1)}s`)
+  } else {
+    console.log(`⚽ MongoDB already has dataset ${datasetInfo.version}`)
+  }
+
+  // Footballers switched off in the database are hidden from the game
+  const inactive = await Footballer.find({ active: false }, { slug: 1 }).lean()
+  if (inactive.length) {
+    removePlayers(inactive.map((f) => f.slug))
+    console.log(`  ${inactive.length} deactivated footballers hidden`)
+  }
 }

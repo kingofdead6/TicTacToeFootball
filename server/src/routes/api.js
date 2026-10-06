@@ -3,6 +3,10 @@ import mongoose from 'mongoose'
 import { allCategories, categoryById } from '../data/categories.js'
 import {
   answersFor,
+  browsePlayers,
+  countFor,
+  cpuPick,
+  datasetInfo,
   generateGrid,
   getGrid,
   matches,
@@ -27,41 +31,76 @@ router.use(attachProfile)
 const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
 router.get('/health', (_req, res) =>
-  res.json({ ok: true, db: isDbReady(), players: players.length, categories: allCategories.length, live: liveStats() }),
+  res.json({ ok: true, db: isDbReady(), players: players.length, categories: allCategories.length, dataset: datasetInfo.version, live: liveStats() }),
 )
 
+// ---------------- Dataset ----------------
+router.get('/dataset', (_req, res) => {
+  const byType = (t) => allCategories.filter((c) => c.type === t).length
+  res.json({
+    ...datasetInfo,
+    players: players.length,
+    notablePlayers: players.filter((p) => p.fame >= datasetInfo.notableFame).length,
+    categories: { clubs: byType('club'), nations: byType('nation'), awards: byType('award') },
+  })
+})
+
 // ---------------- Categories ----------------
+// GET /api/categories?type=club|nation|award&tier=1&q=madrid
 router.get('/categories', (req, res) => {
-  const { type } = req.query
+  const { type, tier, q } = req.query
+  const nq = String(q ?? '').toLowerCase()
   res.json(
     allCategories
-      .filter((c) => !type || c.type === type)
-      .map((c) => ({ ...publicCategory(c), playerCount: players.filter((p) => matches(p, c.id)).length })),
+      .filter((c) => (!type || c.type === type) && (!tier || c.tier <= Number(tier)) && (!nq || c.name.toLowerCase().includes(nq)))
+      .map((c) => ({ ...publicCategory(c), playerCount: countFor(c.id) }))
+      .sort((a, b) => (a.type === b.type ? b.playerCount - a.playerCount : 0)),
   )
 })
 
+// GET /api/categories/:id — one category with its best-known players
+router.get('/categories/:id', (req, res) => {
+  const c = categoryById.get(req.params.id)
+  if (!c) return res.status(404).json({ error: 'Category not found' })
+  const top = browsePlayers({ [c.type === 'club' ? 'club' : c.type === 'nation' ? 'nation' : 'award']: c.id, limit: Number(req.query.limit) || 20 })
+  res.json({ ...publicCategory(c), playerCount: countFor(c.id), topPlayers: top.results.map(publicPlayer) })
+})
+
 // ---------------- Footballers ----------------
+// Autocomplete: GET /api/players/search?q=messi&limit=8
+router.get('/players/search', (req, res) => {
+  res.json(searchPlayers(req.query.q ?? req.query.search, Math.min(Number(req.query.limit) || 8, 25)))
+})
+
+// Browse: GET /api/players?q=&nation=nat_france&club=real_madrid&award=award_ucl&position=FW&sort=fame|name|picked&page=1&limit=30
 router.get(
   '/players',
   wrap(async (req, res) => {
-    const { search, limit } = req.query
-    if (search) return res.json(searchPlayers(search, Math.min(Number(limit) || 8, 25)))
+    // Backwards compatible autocomplete
+    if (req.query.search && !req.query.page) return res.json(searchPlayers(req.query.search, Math.min(Number(req.query.limit) || 8, 25)))
 
-    const page = Math.max(Number(req.query.page) || 1, 1)
-    const size = Math.min(Number(limit) || 50, 500)
+    const { q, nation, club, award, position, sort, page, limit } = req.query
+    let result
+    if (sort === 'picked' && isDbReady()) {
+      // Most-picked ordering comes from the database counters
+      const size = Math.min(Number(limit) || 30, 100)
+      const pg = Math.max(Number(page) || 1, 1)
+      const filter = { active: { $ne: false }, 'stats.picked': { $gt: 0 } }
+      const [docs, total] = await Promise.all([
+        Footballer.find(filter, { slug: 1 }).sort({ 'stats.picked': -1 }).skip((pg - 1) * size).limit(size).lean(),
+        Footballer.countDocuments(filter),
+      ])
+      result = { total, page: pg, pages: Math.ceil(total / size), limit: size, results: docs.map((d) => playerById.get(d.slug)).filter(Boolean) }
+    } else {
+      result = browsePlayers({ q, nation, club, award, position, sort, page, limit })
+    }
+
     const statsBySlug = new Map()
-    if (isDbReady()) {
-      const docs = await Footballer.find({}, { slug: 1, stats: 1 }).lean()
+    if (isDbReady() && result.results.length) {
+      const docs = await Footballer.find({ slug: { $in: result.results.map((p) => p.id) } }, { slug: 1, stats: 1 }).lean()
       for (const d of docs) statsBySlug.set(d.slug, d.stats)
     }
-    const sorted = [...players].sort((a, b) => a.name.localeCompare(b.name))
-    res.json({
-      total: sorted.length,
-      page,
-      results: sorted
-        .slice((page - 1) * size, page * size)
-        .map((p) => ({ ...publicPlayer(p), stats: statsBySlug.get(p.id) ?? { picked: 0, correct: 0 } })),
-    })
+    res.json({ ...result, results: result.results.map((p) => ({ ...publicPlayer(p), stats: statsBySlug.get(p.id) ?? { picked: 0, correct: 0 } })) })
   }),
 )
 
@@ -99,9 +138,16 @@ router.post('/validate', (req, res) => {
 
 router.post('/cpu-answer', (req, res) => {
   const { rowId, colId, exclude = [] } = req.body ?? {}
-  const options = answersFor(rowId, colId).filter((p) => !exclude.includes(p.id))
-  if (!options.length) return res.json({ player: null })
-  res.json({ player: publicPlayer(options[Math.floor(Math.random() * options.length)]) })
+  const pick = cpuPick(rowId, colId, exclude)
+  res.json({ player: pick ? publicPlayer(pick) : null })
+})
+
+// Kept for API consumers: every answer for a pair of categories
+router.get('/answers', (req, res) => {
+  const { row, col } = req.query
+  if (!categoryById.has(row) || !categoryById.has(col)) return res.status(400).json({ error: 'Unknown category' })
+  const list = answersFor(row, col)
+  res.json({ total: list.length, results: list.slice(0, Math.min(Number(req.query.limit) || 50, 200)).map((p) => ({ id: p.id, name: p.name, fame: p.fame })) })
 })
 
 // ---------------- Profiles ----------------

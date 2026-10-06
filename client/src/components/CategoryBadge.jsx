@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 
-const AWARD_ICON = { ballon: '⚽', trophy: '🏆', star: '⭐' }
+const AWARD_ICON = { ballon: '⚽', trophy: '🏆', star: '⭐', globe: '🌍', boot: '👟' }
 
 function luminance(hex) {
   const n = parseInt(hex.slice(1), 16)
@@ -9,12 +10,15 @@ function luminance(hex) {
 }
 
 export function Flag({ code, className = 'h-8 w-12' }) {
-  if (!code) return <span className={`${className} grid place-items-center rounded bg-white/10 text-xs`}>🏳️</span>
+  const [broken, setBroken] = useState(false)
+  // Historical nations (Yugoslavia, USSR…) have no flag on the CDN
+  if (!code || broken) return <span className={`${className} grid place-items-center rounded-md bg-white/10 text-xs ring-1 ring-white/20`}>🏳️</span>
   return (
     <img
       src={`https://flagcdn.com/w160/${code}.png`}
       alt=""
       loading="lazy"
+      onError={() => setBroken(true)}
       className={`${className} rounded-md object-cover shadow-lg ring-1 ring-white/20`}
     />
   )

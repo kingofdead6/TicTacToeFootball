@@ -279,7 +279,7 @@ const raw = [
   ['Alexis Sánchez', 'Chile', 'FW', ['barcelona', 'arsenal', 'man_utd', 'inter', 'marseille', 'sevilla'], ''],
   ['Gareth Bale', 'Wales', 'FW', ['tottenham', 'real_madrid'], 'U'],
   ['Son Heung-min', 'South Korea', 'FW', ['leverkusen', 'tottenham'], ''],
-  ['Christian Pulisic', 'USA', 'FW', ['dortmund', 'chelsea', 'ac_milan'], 'U'],
+  ['Christian Pulisic', 'United States', 'FW', ['dortmund', 'chelsea', 'ac_milan'], 'U'],
   ['Hakan Çalhanoğlu', 'Turkey', 'MF', ['leverkusen', 'ac_milan', 'inter'], ''],
   ['Henrikh Mkhitaryan', 'Armenia', 'MF', ['dortmund', 'man_utd', 'arsenal', 'roma', 'inter'], ''],
   ['Nemanja Vidić', 'Serbia', 'DF', ['man_utd', 'inter'], 'U'],

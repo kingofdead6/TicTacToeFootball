@@ -74,7 +74,7 @@ export default function Cell({ index, value, turn, onClick, disabled, shake, isW
                   {s.name}
                 </span>
               ))}
-              {solutions.length > 4 && <span className="font-semibold text-orange-500">+{solutions.length - 4} more</span>}
+              {(answerCount ?? solutions.length) > 4 && <span className="font-semibold text-orange-500">+{(answerCount ?? solutions.length) - 4} more</span>}
             </span>
           )}
           {cpuTarget && (

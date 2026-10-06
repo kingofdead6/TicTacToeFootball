@@ -10,6 +10,8 @@ import ProfileModal from './components/ProfileModal.jsx'
 import { useProfile } from './profile.jsx'
 import { brand } from './assets/brand/index.js'
 
+const SEC_SITE = 'https://sec-club.com/'
+
 const TABS = [
   { id: 'home', label: 'Play', icon: '⚽' },
   { id: 'online', label: 'Online', icon: '🌐' },
@@ -168,11 +170,19 @@ function Footer({ onNavigate }) {
             </button>
           ))}
         </nav>
-        <div className="text-center sm:text-right">
+        <motion.a
+          href={SEC_SITE}
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ y: -3 }}
+          className="group block text-center sm:text-right"
+        >
           <p className="font-display text-2xl font-extrabold">CONTACT US</p>
-          <img src={brand.socialMedia} alt="Instagram, Facebook, LinkedIn" className="mt-3 inline-block h-8" />
-          <p className="mt-3 font-sans text-sm font-light">or via seclub@esi.dz</p>
-        </div>
+          <img src={brand.socialMedia} alt="" className="mt-3 inline-block h-8 transition-transform group-hover:scale-105" />
+          <p className="mt-3 inline-flex items-center gap-1.5 font-sans text-sm font-medium underline-offset-4 group-hover:underline">
+            Visit sec-club.com <img src={brand.arrowRight} alt="" className="h-3 w-auto" />
+          </p>
+        </motion.a>
       </div>
       <p className="mt-10 text-center font-sans text-sm font-light text-white/90">
         Tic Tac Toe Football · © {new Date().getFullYear()} Sport &amp; Entertainment Club · ESI Oued Smar

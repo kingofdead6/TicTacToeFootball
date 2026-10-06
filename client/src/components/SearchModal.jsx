@@ -143,7 +143,10 @@ export default function SearchModal({ open, row, col, turn, playerName, usedIds,
                           }`}
                         >
                           <Flag code={p.flag} className="h-5 w-7" />
-                          <span className="flex-1 font-semibold">{p.name}</span>
+                          <span className="flex-1 font-semibold">
+                            {p.name}
+                            {p.born && <span className="ml-1.5 text-xs font-normal text-blue-200/60">{p.born}</span>}
+                          </span>
                           <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] font-bold text-white/60">{p.position}</span>
                           {used && <span className="text-xs text-white/50">used</span>}
                         </button>
