@@ -15,7 +15,6 @@ import locationPin from './location-pin.svg'
 import arrowRight from './arrow-right.svg'
 import arrowDownCircle from './arrow-down-circle.svg'
 import podiumIcon from './podium-icon.svg'
-import socialMedia from './social-media.svg'
 import stickerSkills from './sticker-skills.webp'
 import stickerCat from './sticker-cat.webp'
 import stickerJersey from './sticker-jersey.webp'
@@ -40,7 +39,6 @@ export const brand = {
   arrowRight,
   arrowDownCircle,
   podiumIcon,
-  socialMedia,
   stickers: {
     skills: stickerSkills,
     cat: stickerCat,

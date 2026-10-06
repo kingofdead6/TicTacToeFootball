@@ -178,7 +178,6 @@ function Footer({ onNavigate }) {
           className="group block text-center sm:text-right"
         >
           <p className="font-display text-2xl font-extrabold">CONTACT US</p>
-          <img src={brand.socialMedia} alt="" className="mt-3 inline-block h-8 transition-transform group-hover:scale-105" />
           <p className="mt-3 inline-flex items-center gap-1.5 font-sans text-sm font-medium underline-offset-4 group-hover:underline">
             Visit sec-club.com <img src={brand.arrowRight} alt="" className="h-3 w-auto" />
           </p>
