@@ -366,7 +366,7 @@ export function attachRealtime(server) {
         code: makeCode(),
         createdAt: Date.now(),
         settings: {
-          difficulty: ['easy', 'medium', 'hard'].includes(s.difficulty) ? s.difficulty : 'medium',
+          difficulty: ['easy', 'medium', 'hard', 'impossible'].includes(s.difficulty) ? s.difficulty : 'medium',
           timer: [0, 15, 30, 60].includes(Number(s.timer)) ? Number(s.timer) : 30,
           bestOf: [1, 3, 5].includes(Number(s.bestOf)) ? Number(s.bestOf) : 3,
         },

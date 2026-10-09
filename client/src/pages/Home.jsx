@@ -227,6 +227,7 @@ export default function Home({ onStart, initial, onOnline }) {
                   { value: 'easy', label: 'Easy' },
                   { value: 'medium', label: 'Medium' },
                   { value: 'hard', label: 'Hard' },
+                  { value: 'impossible', label: 'Impossible' },
                 ]}
               />
             </div>

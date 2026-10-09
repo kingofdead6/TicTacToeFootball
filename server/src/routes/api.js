@@ -247,7 +247,7 @@ router.post(
     const match = await Match.create({
       mode: mode === 'cpu' ? 'cpu' : 'local',
       ranked: false,
-      difficulty: ['easy', 'medium', 'hard'].includes(difficulty) ? difficulty : 'medium',
+      difficulty: ['easy', 'medium', 'hard', 'impossible'].includes(difficulty) ? difficulty : 'medium',
       players: ps.map((p, i) => ({
         profile: i === 0 && req.profile ? req.profile._id : null,
         name: String(p.name ?? '').slice(0, 24) || 'Player',

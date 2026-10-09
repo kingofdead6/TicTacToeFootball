@@ -93,6 +93,7 @@ export default function Lobby({ onCreate, onJoin, busy, live, initialCode }) {
               { value: 'easy', label: 'Easy' },
               { value: 'medium', label: 'Medium' },
               { value: 'hard', label: 'Hard' },
+              { value: 'impossible', label: 'Impossible' },
             ]}
           />
           <Label>Turn timer</Label>

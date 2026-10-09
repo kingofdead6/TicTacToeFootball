@@ -209,6 +209,8 @@ const DIFFICULTY = {
   medium: { min: 3, notable: true, allow: (c) => (c.type === 'nation' ? c.tier === 1 : c.tier <= 2) && !(c.type === 'award' && c.tier > 1) },
   // every tier-1/2 category; 2+ well-known answers per square
   hard: { min: 2, notable: true, allow: (c) => c.tier <= 2 },
+  // any club, nation or trophy; a square may have a single (possibly obscure) answer
+  impossible: { min: 1, notable: false, allow: (c) => countFor(c.id) >= 5 },
 }
 
 const grids = new Map() // gridId -> grid (kept so answers can be revealed later)

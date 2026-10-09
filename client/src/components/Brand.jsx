@@ -19,11 +19,18 @@ export function BallText({ children, spin }) {
   const text = String(children)
   const i = text.toUpperCase().indexOf('O')
   if (i < 0) return text
+  // Keep the word holding the ball on one line, so it never wraps as "⚽ / NLINE"
+  const start = text.lastIndexOf(' ', i) + 1
+  const end = text.indexOf(' ', i) === -1 ? text.length : text.indexOf(' ', i)
   return (
     <>
-      {text.slice(0, i)}
-      <BallO spin={spin} />
-      {text.slice(i + 1)}
+      {text.slice(0, start)}
+      <span className="whitespace-nowrap">
+        {text.slice(start, i)}
+        <BallO spin={spin} />
+        {text.slice(i + 1, end)}
+      </span>
+      {text.slice(end)}
     </>
   )
 }
@@ -42,7 +49,7 @@ export function SectionTitle({ children, sub, className = '', align = 'center' }
           transition={{ duration: 0.6 }}
           className={`h-[3px] w-10 origin-right rounded-full bg-blue-400 sm:w-16 ${align === 'center' ? '' : 'hidden'}`}
         />
-        <h1 className="font-display text-5xl font-black uppercase tracking-wide text-white sm:text-6xl">
+        <h1 className="font-display text-4xl font-black uppercase tracking-wide text-white sm:text-6xl">
           <BallText>{children}</BallText>
         </h1>
         <motion.span
