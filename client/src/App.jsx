@@ -6,11 +6,13 @@ import Game from './pages/Game.jsx'
 import Players from './pages/Players.jsx'
 import Leaderboard from './pages/Leaderboard.jsx'
 import Online from './pages/Online.jsx'
+import NotFound from './pages/NotFound.jsx'
 import ProfileModal from './components/ProfileModal.jsx'
 import { useProfile } from './profile.jsx'
 import { brand } from './assets/brand/index.js'
 
 const SEC_SITE = 'https://sec-club.com/'
+const KNOWN_PATHS = ['/', '/index.html']
 
 const TABS = [
   { id: 'home', label: 'Play', icon: '⚽' },
@@ -22,12 +24,17 @@ const TABS = [
 export default function App() {
   // An invite link (?room=CODE) opens the online lobby directly
   const [inviteCode] = useState(() => new URLSearchParams(window.location.search).get('room'))
-  const [page, setPage] = useState(inviteCode ? 'online' : 'home')
+  // Every page lives at "/"; any other path (e.g. a mistyped link) gets the 404 page
+  const [page, setPage] = useState(() => (!KNOWN_PATHS.includes(window.location.pathname) ? 'notfound' : inviteCode ? 'online' : 'home'))
   const [settings, setSettings] = useState(null)
 
   // Each page starts at the top (e.g. "Kick off" is clicked far down the home page)
   useEffect(() => {
     window.scrollTo({ top: 0 })
+    // Leaving the 404 page: put the address back to the app root
+    if (page !== 'notfound' && !KNOWN_PATHS.includes(window.location.pathname)) {
+      window.history.replaceState(null, '', '/' + window.location.search)
+    }
   }, [page])
 
   const startGame = (s) => {
@@ -102,6 +109,7 @@ export default function App() {
             {page === 'game' && settings && <Game settings={settings} onExit={() => setPage('home')} />}
             {page === 'players' && <Players />}
             {page === 'leaderboard' && <Leaderboard />}
+            {page === 'notfound' && <NotFound onNavigate={setPage} />}
           </motion.div>
         </AnimatePresence>
       </main>
