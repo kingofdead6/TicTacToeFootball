@@ -205,8 +205,10 @@ export function cpuPick(rowId, colId, exclude = []) {
 const DIFFICULTY = {
   // only famous clubs / big football nations, and every square needs 4+ well-known answers
   easy: { min: 4, notable: true, allow: (c) => c.type !== 'award' && c.tier === 1 },
-  medium: { min: 2, notable: true, allow: (c) => c.tier <= 2 },
-  hard: { min: 1, notable: false, allow: (c) => countFor(c.id) >= 5 },
+  // well-known clubs join the mix, nations stay the big ones, and the main trophies appear
+  medium: { min: 3, notable: true, allow: (c) => (c.type === 'nation' ? c.tier === 1 : c.tier <= 2) && !(c.type === 'award' && c.tier > 1) },
+  // every tier-1/2 category; 2+ well-known answers per square
+  hard: { min: 2, notable: true, allow: (c) => c.tier <= 2 },
 }
 
 const grids = new Map() // gridId -> grid (kept so answers can be revealed later)
