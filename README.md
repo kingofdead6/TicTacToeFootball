@@ -75,6 +75,8 @@ cd server && npm run import:players      # about 3 minutes
 - **Players:** everyone who played for a club in `src/data/clubs.js`. To add a club, give it a colour, short code, tier and Wikipedia title there, then re-run the import.
 - **Names:** taken from the player's English Wikipedia article title, which is less exposed to label vandalism than Wikidata labels.
 - **Fame:** the number of Wikipedia language editions. It ranks search results, guides the AI's picks, and keeps easy and medium grids to well-known players (12 or more editions).
-- **Awards:** Ballon d'Or, FIFA World Player / The Best and the European Golden Shoe come from Wikidata. World Cup and Champions League winners come from the hand-checked list in `src/data/players.js`, which is merged in, and its spellings take priority.
+- **Awards:** Ballon d'Or, FIFA World Player / The Best and the European Golden Shoe come from Wikidata.
+- **World Cup / Champions League winners** are found automatically by [`scripts/trophies.js`](server/scripts/trophies.js). Wikidata says who won each edition. Players come from the winning squad on Wikipedia's "*year* FIFA World Cup squads" page, or from the winning team's line-up (substitutes included) on the final's page. Players are matched by Wikidata id, not by name. Re-running the import picks up new tournaments automatically.
+- The hand-checked list in `src/data/players.js` is merged in last, and its spellings take priority.
 
 Commit the new dataset file and redeploy. On start, the server mirrors a new version into MongoDB, and pick stats are kept.

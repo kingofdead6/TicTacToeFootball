@@ -13,11 +13,12 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { CLUBS } from '../src/data/clubs.js'
 import { players as seedPlayers } from '../src/data/players.js'
+import { createTrophyFetcher } from './trophies.js'
 
 const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'generated')
 const QID_CACHE = join(OUT_DIR, 'club-qids.json')
 const HEADERS = {
-  'User-Agent': 'TicTacToeFootball-Importer/1.0 (educational football trivia game; contact via sec-club.com)',
+  'User-Agent': 'TicTacToeFootball-Importer/1.0 (https://sec-club.com/; educational football trivia game)',
   Accept: 'application/sparql-results+json',
 }
 const CONCURRENCY = 3
@@ -266,6 +267,19 @@ async function main() {
       awards: [...p.awards],
     })
   }
+
+  // World Cup squads and Champions League final line-ups (Wikipedia, matched by Wikidata id)
+  console.log('Fetching World Cup and Champions League winners…')
+  const trophies = createTrophyFetcher({ sparql, headers: HEADERS, log: (m) => console.log(m) })
+  const wcWinners = await trophies.worldCupWinners()
+  const uclWinners = await trophies.championsLeagueWinners()
+  let wcCount = 0
+  let uclCount = 0
+  for (const p of players) {
+    if (wcWinners.has(p.qid)) (p.awards = [...new Set([...p.awards, 'award_world_cup'])]), wcCount++
+    if (uclWinners.has(p.qid)) (p.awards = [...new Set([...p.awards, 'award_ucl'])]), uclCount++
+  }
+  console.log(`  ${wcCount} World Cup winners and ${uclCount} Champions League winners in the dataset`)
 
   // Merge the hand-checked seed (World Cup / Champions League winners, extra clubs)
   const byName = new Map()
